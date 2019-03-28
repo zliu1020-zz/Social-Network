@@ -45,8 +45,11 @@ class Util:
         result = DBConnector.query(searchQuery)
 
         if result:
+            global ID
             ID = result[0][0]
+            global USERNAME
             USERNAME = result[0][1]
+            global TIMESTAMP
             TIMESTAMP = time.time()
             print("Hello, " + USERNAME + " !")
             return True
@@ -116,7 +119,10 @@ class Util:
         
     @staticmethod
     def getPostsUserOwns():
-        print("getPostsUserOwns")
+        sql = "select postID, content, ts, thumbNum from UsersOwnPosts\
+         inner join Post on UsersOwnPosts.postID = Post.pID where userID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def makeNewPostWithTopic():
@@ -155,13 +161,12 @@ class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     Util.login()
-
-    while True:
-        var = input("Please enter something: ")
-        print("You entered: " + var)
-        if int(var) == 123:
-            Util.getNewPostsFromFolloweesSinceLastLogin()
-            break
+    # while True:
+    #     var = input("Please enter something: ")
+    #     print("You entered: " + var)
+    #     if int(var) == 123:
+    #         Util.getNewPostsFromFolloweesSinceLastLogin()
+    #         break
 
     
     
