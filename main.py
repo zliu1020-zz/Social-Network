@@ -88,7 +88,15 @@ class Util:
         
     @staticmethod
     def getTopicsCurrentUserFollows():
-        print("getTopicsCurrentUserFollows")
+            sql = "select Topic.name from Topic \
+                    inner join UsersFollowTopics as U \
+                        on Topic.tID = U.topicID and U.userID = " + str(ID) +";"
+            print(sql)
+            result = DBConnector.query(sql)
+            print(result)
+            
+        
+           
 
     @staticmethod
     def getGroupsUserJoins():
@@ -134,7 +142,8 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    Util.login()
+    # Util.login()
+    Util.getTopicsCurrentUserFollows()
     
     # while True:
     #     var = input("Please enter something: ")
