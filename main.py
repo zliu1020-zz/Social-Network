@@ -5,7 +5,8 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="lzy971020"
+            #lzy971020
+            password="htp19950715"
         )
         self.cursor = self.db.cursor()
     
@@ -45,7 +46,7 @@ class Util:
         print("getNewPostsFromFolloweesSinceLastLogin")
         
     @staticmethod
-    def getNewPostsFromTopicsUserFollowsSinceLastLogin:
+    def getNewPostsFromTopicsUserFollowsSinceLastLogin():
         print("getNewPostsFromFolloweesSinceLastLogin")
         
     @staticmethod
