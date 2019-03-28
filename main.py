@@ -22,6 +22,11 @@ class DatabaseConnector:
     def execute(self, sql, val=None):
         self.cursor.execute(sql, val or ())
         self.db.commit()
+
+        if self.cursor.rowcount == 0:
+            return False
+        else:
+            return True
         
     def runScript(self, path):
         file = open(path, 'r')
@@ -113,9 +118,6 @@ class Util:
             print(sql)
             result = DBConnector.query(sql)
             print(result)
-            
-        
-           
 
     @staticmethod
     def getGroupsUserJoins():
@@ -138,7 +140,15 @@ class Util:
     
     @staticmethod
     def thumbUpPost():
-        print("thumbUpPost")
+        postNumber = input("what is the ID of the post you want to thumb up? ")
+
+        sql = "update Post set thumbNum = thumbNum + 1 where pID = " + postNumber
+        result = DBConnector.execute(sql)
+
+        if result:
+            print("thumb up added to the the post!")
+        else:
+            print("something wrong happened to the machine, please try again!")
         
     @staticmethod
     def thumbDownPost():
@@ -168,8 +178,9 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    Util.login()
-    
+    # Util.login()
+    Util.thumbUpPost()
+
     # while True:
     #     var = input("Please enter something: ")
     #     print("You entered: " + var)
