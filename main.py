@@ -166,7 +166,15 @@ class Util:
         
     @staticmethod
     def thumbDownPost():
-        print("thumbDownPost")
+        postNumber = input("what is the ID of the post you want to thumb down? ")
+
+        sql = "update Post set thumbNum = thumbNum - 1 where pID = " + postNumber
+        result = DBConnector.execute(sql)
+
+        if result:
+            print("thumb down added to the the post!")
+        else:
+            print("something wrong happened to the machine, please try again!")
         
     @staticmethod
     def replyToPost():
