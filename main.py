@@ -10,7 +10,8 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="lzy971020"
+            #lzy971020
+            password="htp19950715"
         )
         self.cursor = self.db.cursor()
     
@@ -110,7 +111,7 @@ class Util:
 
 
 class Main:
-    dbConnector.runScript("./createTable.sql")
+    DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     
     while True:
