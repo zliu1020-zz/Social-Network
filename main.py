@@ -1,4 +1,9 @@
 import mysql.connector
+import time;
+
+USERNAME = "Alice"
+ID = 1
+TIMESTAMP = time.time()
 
 class DatabaseConnector:
     def __init__(self):
@@ -28,10 +33,84 @@ class DatabaseConnector:
             except OperationalError:
                 print("Error found when executing sql statement: ", statement , " Skipping.")
 
+DBConnector = DatabaseConnector()
+
+class Util:  
+    @staticmethod
+    def login():
+        print("login")
+      
+    @staticmethod
+    def getCurrentUserInformation():
+        print("getCurrentUserInformation")
+        
+    @staticmethod
+    def getCurrentUserInformation():
+        print("getCurrentUserInformation")
+        
+    @staticmethod
+    def getNewPostsFromFolloweesSinceLastLogin():
+        print("getNewPostsFromFolloweesSinceLastLogin")
+        
+    @staticmethod
+    def getNewPostsFromTopicsUserFollowsSinceLastLogin():
+        print("getNewPostsFromFolloweesSinceLastLogin")
+        
+    @staticmethod
+    def getAllFollowers():
+        print("getAllFollowers")
+    
+    @staticmethod
+    def getAllFollowees():
+        print("getAllFollowees")
+        
+    @staticmethod
+    def getTopicsCurrentUserFollows():
+        print("getTopicsCurrentUserFollows")
+
+    @staticmethod
+    def getGroupsUserJoins():
+        print("getGroupsUserJoins")
+        
+    @staticmethod
+    def getPostsUserOwns():
+        print("getPostsUserOwns")
+        
+    @staticmethod
+    def makeNewPostWithTopic():
+        print("makeNewPostWithTopic")
+    
+    @staticmethod
+    def thumbUpPost():
+        print("thumbUpPost")
+        
+    @staticmethod
+    def thumbDownPost():
+        print("thumbDownPost")
+        
+    @staticmethod
+    def replyToPost():
+        print("replyToPost")
+        
+    @staticmethod
+    def joinGroup():
+        print("joinGroup")
+        
+    @staticmethod
+    def createGroup():
+        print("createGroup")
+        
+    @staticmethod
+    def followTopic():
+        print("followTopic")
+        
+    @staticmethod
+    def logout():
+        print("logout")
+
 
 class Main:
-    dbConnector = DatabaseConnector();
-    dbConnector.runScript("./createTable.sql")
+    DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     
     while True:
