@@ -19,7 +19,7 @@ class DatabaseConnector:
     def query(self, sql):
         self.cursor.execute(sql)
         return self.cursor.fetchall()
-    
+
     def execute(self, sql, val=None):
         self.cursor.execute(sql, val or ())
         self.db.commit()
@@ -40,11 +40,26 @@ DBConnector = DatabaseConnector()
 class Util:  
     @staticmethod
     def login():
-        print("login")
+        userName = input("what is your user name? ")
+        userID = input("what is your ID ")
+        searchQuery = "select * from NetworkUser where name = '" + userName + "' and uID = " + userID + ";"
+        result = DBConnector.query(searchQuery)
+
+        if result:
+            ID = result[0][0]
+            USERNAME = result[0][1]
+            print("Hello, " + USERNAME + " !")
+            return True
+
+        else:
+            print("you are not present in our database, please try again")
+            return False
       
     @staticmethod
     def getCurrentUserInformation():
-        print("getCurrentUserInformation")
+        sql = "select * from NetworkUser WHERE uid = %i" % ID
+        result = DBConnector.query(sql)
+        return result
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
@@ -71,11 +86,21 @@ class Util:
         
     @staticmethod
     def getAllFollowers():
-        print("getAllFollowers")
+        sql = "select UsersFollowUsers.followerID as followerID,\
+         (select name from NetworkUser where uID = followerID) as followerName\
+         from NetworkUser inner join UsersFollowUsers on NetworkUser.uID = UsersFollowUsers.followeeID\
+         where uID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
     
     @staticmethod
     def getAllFollowees():
-        print("getAllFollowees")
+        sql = "select UsersFollowUsers.followeeID,\
+         (select name from NetworkUser where NetworkUser.uID = UsersFollowUsers.followeeID) as followeeName\
+          from UsersFollowUsers inner join NetworkUser\
+           on UsersFollowUsers.followerID = NetworkUser.uID where followerID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def getTopicsCurrentUserFollows():
@@ -125,7 +150,8 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    
+    Util.login()
+
     while True:
         var = input("Please enter something: ")
         print("You entered: " + var)
