@@ -29,19 +29,19 @@ class DatabaseConnector:
                 print("Error found when executing sql statement: ", statement , " Skipping.")
 class Util:  
     @staticmethod
-    def login:
+    def login():
         print("login")
       
     @staticmethod
-    def getCurrentUserInformation:
+    def getCurrentUserInformation():
         print("getCurrentUserInformation")
         
     @staticmethod
-    def getCurrentUserInformation:
+    def getCurrentUserInformation():
         print("getCurrentUserInformation")
         
     @staticmethod
-    def getNewPostsFromFolloweesSinceLastLogin:
+    def getNewPostsFromFolloweesSinceLastLogin():
         print("getNewPostsFromFolloweesSinceLastLogin")
         
     @staticmethod
@@ -49,55 +49,55 @@ class Util:
         print("getNewPostsFromFolloweesSinceLastLogin")
         
     @staticmethod
-    def getAllFollowers:
+    def getAllFollowers():
         print("getAllFollowers")
     
     @staticmethod
-    def getAllFollowees:
+    def getAllFollowees():
         print("getAllFollowees")
         
     @staticmethod
-    def getTopicsCurrentUserFollows:
+    def getTopicsCurrentUserFollows():
         print("getTopicsCurrentUserFollows")
 
     @staticmethod
-    def getGroupsUserJoins:
+    def getGroupsUserJoins():
         print("getGroupsUserJoins")
         
     @staticmethod
-    def getPostsUserOwns:
+    def getPostsUserOwns():
         print("getPostsUserOwns")
         
     @staticmethod
-    def makeNewPostWithTopic:
+    def makeNewPostWithTopic():
         print("makeNewPostWithTopic")
     
     @staticmethod
-    def thumbUpPost:
+    def thumbUpPost():
         print("thumbUpPost")
         
     @staticmethod
-    def thumbDownPost:
+    def thumbDownPost():
         print("thumbDownPost")
         
     @staticmethod
-    def replyToPost :
+    def replyToPost():
         print("replyToPost")
         
     @staticmethod
-    def joinGroup :
+    def joinGroup():
         print("joinGroup")
         
     @staticmethod
-    def createGroup :
+    def createGroup():
         print("createGroup")
         
     @staticmethod
-    def followTopic :
+    def followTopic():
         print("followTopic")
         
     @staticmethod
-    def logout :
+    def logout():
         print("logout")
 
 
