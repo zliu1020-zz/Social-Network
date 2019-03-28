@@ -57,7 +57,9 @@ class Util:
       
     @staticmethod
     def getCurrentUserInformation():
-        print("getCurrentUserInformation")
+        sql = "select * from NetworkUser WHERE uid = %i" % ID
+        result = DBConnector.query(sql)
+        return result
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
@@ -123,6 +125,7 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
+<<<<<<< HEAD
 
     Util.login()
     
@@ -132,6 +135,14 @@ class Main:
     #     if int(var) == 123:
     #         print("Terminating the program. Bye.")
     #         break
+=======
+    while True:
+        var = input("Please enter something: ")
+        print("You entered: " + var)
+        if int(var) == 123:
+            print("Terminating the program. Bye.")
+            break
+>>>>>>> 74a20ff790b5a6d28feecf7b58858f6b991aea50
             
     
     
