@@ -10,7 +10,7 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="mappleleaf12"
+            password="lzy971020"
         )
         self.cursor = self.db.cursor()
     
@@ -46,7 +46,7 @@ class Util:
         if result:
             ID = result[0][0]
             USERNAME = result[0][1]
-            TIMESTAMP = result[0][2]
+            TIMESTAMP = time.time()
             print("Hello, " + USERNAME + " !")
             return True
 
@@ -92,7 +92,11 @@ class Util:
 
     @staticmethod
     def getGroupsUserJoins():
-        print("getGroupsUserJoins")
+        sql = "select UsersBelongToGroups.groupID, SocialGroup.name from UsersBelongToGroups\
+         inner join SocialGroup on UsersBelongToGroups.groupID = SocialGroup.gID\
+          where userID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def getPostsUserOwns():
