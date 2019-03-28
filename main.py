@@ -11,7 +11,7 @@ class DatabaseConnector:
             host="localhost",
             user="root",
             #lzy971020
-            password="htp19950715"
+            password="lzy971020"
         )
         self.cursor = self.db.cursor()
     
@@ -43,7 +43,9 @@ class Util:
       
     @staticmethod
     def getCurrentUserInformation():
-        print("getCurrentUserInformation")
+        sql = "select * from NetworkUser WHERE uid = %i" % ID
+        result = DBConnector.query(sql)
+        return result
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
@@ -109,7 +111,6 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    
     while True:
         var = input("Please enter something: ")
         print("You entered: " + var)
