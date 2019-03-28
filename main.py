@@ -52,8 +52,6 @@ class Util:
         else:
             print("you are not present in our database, please try again")
             return False
-        
-
       
     @staticmethod
     def getCurrentUserInformation():
@@ -71,11 +69,21 @@ class Util:
         
     @staticmethod
     def getAllFollowers():
-        print("getAllFollowers")
+        sql = "select UsersFollowUsers.followerID as followerID,\
+         (select name from NetworkUser where uID = followerID) as followerName\
+         from NetworkUser inner join UsersFollowUsers on NetworkUser.uID = UsersFollowUsers.followeeID\
+         where uID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
     
     @staticmethod
     def getAllFollowees():
-        print("getAllFollowees")
+        sql = "select UsersFollowUsers.followeeID,\
+         (select name from NetworkUser where NetworkUser.uID = UsersFollowUsers.followeeID) as followeeName\
+          from UsersFollowUsers inner join NetworkUser\
+           on UsersFollowUsers.followerID = NetworkUser.uID where followerID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def getTopicsCurrentUserFollows():
@@ -125,8 +133,6 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-<<<<<<< HEAD
-
     Util.login()
     
     # while True:
@@ -135,14 +141,7 @@ class Main:
     #     if int(var) == 123:
     #         print("Terminating the program. Bye.")
     #         break
-=======
-    while True:
-        var = input("Please enter something: ")
-        print("You entered: " + var)
-        if int(var) == 123:
-            print("Terminating the program. Bye.")
-            break
->>>>>>> 74a20ff790b5a6d28feecf7b58858f6b991aea50
+
             
     
     
