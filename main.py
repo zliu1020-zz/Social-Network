@@ -1,5 +1,5 @@
 import mysql.connector
-import time;
+import time
 
 USERNAME = "Alice"
 ID = 1
@@ -44,11 +44,7 @@ class Util:
     @staticmethod
     def getCurrentUserInformation():
         print("getCurrentUserInformation")
-        
-    @staticmethod
-    def getCurrentUserInformation():
-        print("getCurrentUserInformation")
-        
+
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
         print("getNewPostsFromFolloweesSinceLastLogin")
