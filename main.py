@@ -2,17 +2,16 @@ import mysql.connector
 import time
 from datetime import timezone
 
-USER_NAME = "Alice"
-USER_ID = 1
-TIMESTAMP = time.time()
+USERNAME = ""
+ID = -1
+TIMESTAMP = time.gmtime(0)
 
 class DatabaseConnector:
     def __init__(self):
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            #lzy971020
-            password="htp19950715"
+            password="lzy971020"
         )
         self.cursor = self.db.cursor()
     
@@ -48,6 +47,7 @@ class Util:
         if result:
             ID = result[0][0]
             USERNAME = result[0][1]
+            TIMESTAMP = time.time()
             print("Hello, " + USERNAME + " !")
             return True
 
@@ -108,7 +108,11 @@ class Util:
 
     @staticmethod
     def getGroupsUserJoins():
-        print("getGroupsUserJoins")
+        sql = "select UsersBelongToGroups.groupID, SocialGroup.name from UsersBelongToGroups\
+         inner join SocialGroup on UsersBelongToGroups.groupID = SocialGroup.gID\
+          where userID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def getPostsUserOwns():
@@ -158,7 +162,7 @@ class Main:
         if int(var) == 123:
             Util.getNewPostsFromFolloweesSinceLastLogin()
             break
-            
+
     
     
     
