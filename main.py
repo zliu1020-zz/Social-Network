@@ -1,8 +1,9 @@
 import mysql.connector
 import time
+from datetime import timezone
 
-USERNAME = "Alice"
-ID = 1
+USER_NAME = "Alice"
+USER_ID = 1
 TIMESTAMP = time.time()
 
 class DatabaseConnector:
@@ -47,7 +48,22 @@ class Util:
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
-        print("getNewPostsFromFolloweesSinceLastLogin")
+        sql_query = "select content, ts " \
+                "from Post " \
+                "   inner join ((select followeeID " \
+                "       from UsersFollowUsers " \
+                "       where followerID = 2) as followees " \
+                "       inner join UsersOwnPosts " \
+                "           on (userID = followees.followeeID)) " \
+                "   on (Post.pID = postID );"
+        new_posts = DBConnector.query(sql_query)
+        for post in new_posts:
+            # convert datetime.datetime to UTC timestamp
+            post_timestamp = post[1].replace(tzinfo=timezone.utc).timestamp()
+            if post_timestamp > TIMESTAMP:
+                new_posts.remove(post)
+        print(new_posts)
+        return new_posts
         
     @staticmethod
     def getNewPostsFromTopicsUserFollowsSinceLastLogin():
@@ -114,7 +130,7 @@ class Main:
         var = input("Please enter something: ")
         print("You entered: " + var)
         if int(var) == 123:
-            print("Terminating the program. Bye.")
+            Util.getNewPostsFromFolloweesSinceLastLogin()
             break
             
     
