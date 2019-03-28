@@ -1,5 +1,6 @@
 import mysql.connector
 import time
+from datetime import timezone
 
 USERNAME = ""
 ID = -1
@@ -44,9 +45,12 @@ class Util:
         result = DBConnector.query(searchQuery)
 
         if result:
+            global ID
             ID = result[0][0]
+            global USERNAME
             USERNAME = result[0][1]
-            TIMESTAMP = result[0][2]
+            global TIMESTAMP
+            TIMESTAMP = time.time()
             print("Hello, " + USERNAME + " !")
             return True
 
@@ -62,7 +66,22 @@ class Util:
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
-        print("getNewPostsFromFolloweesSinceLastLogin")
+        sql_query = "select content, ts " \
+                "from Post " \
+                "   inner join ((select followeeID " \
+                "       from UsersFollowUsers " \
+                "       where followerID = 2) as followees " \
+                "       inner join UsersOwnPosts " \
+                "           on (userID = followees.followeeID)) " \
+                "   on (Post.pID = postID );"
+        new_posts = DBConnector.query(sql_query)
+        for post in new_posts:
+            # convert datetime.datetime to UTC timestamp
+            post_timestamp = post[1].replace(tzinfo=timezone.utc).timestamp()
+            if post_timestamp > TIMESTAMP:
+                new_posts.remove(post)
+        print(new_posts)
+        return new_posts
         
     @staticmethod
     def getNewPostsFromTopicsUserFollowsSinceLastLogin():
@@ -100,11 +119,18 @@ class Util:
 
     @staticmethod
     def getGroupsUserJoins():
-        print("getGroupsUserJoins")
+        sql = "select UsersBelongToGroups.groupID, SocialGroup.name from UsersBelongToGroups\
+         inner join SocialGroup on UsersBelongToGroups.groupID = SocialGroup.gID\
+          where userID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def getPostsUserOwns():
-        print("getPostsUserOwns")
+        sql = "select postID, content, ts, thumbNum from UsersOwnPosts\
+         inner join Post on UsersOwnPosts.postID = Post.pID where userID = %i" % ID
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def makeNewPostWithTopic():
@@ -142,17 +168,15 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    # Util.login()
-    Util.getTopicsCurrentUserFollows()
+    Util.login()
     
     # while True:
     #     var = input("Please enter something: ")
     #     print("You entered: " + var)
     #     if int(var) == 123:
-    #         print("Terminating the program. Bye.")
+    #         Util.getNewPostsFromFolloweesSinceLastLogin()
     #         break
 
-            
     
     
     
