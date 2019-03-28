@@ -1,10 +1,11 @@
 import mysql.connector
 import time
-from datetime import timezone
+import datetime
 
 USERNAME = ""
 ID = -1
-TIMESTAMP = time.gmtime(0)
+TIMESTAMP = 0
+
 
 class DatabaseConnector:
     def __init__(self):
@@ -75,22 +76,35 @@ class Util:
                 "from Post " \
                 "   inner join ((select followeeID " \
                 "       from UsersFollowUsers " \
-                "       where followerID = 2) as followees " \
+                "       where followerID = %i) as followees " \
                 "       inner join UsersOwnPosts " \
                 "           on (userID = followees.followeeID)) " \
-                "   on (Post.pID = postID );"
+                "   on (Post.pID = postID );" % ID
         new_posts = DBConnector.query(sql_query)
         for post in new_posts:
             # convert datetime.datetime to UTC timestamp
-            post_timestamp = post[1].replace(tzinfo=timezone.utc).timestamp()
-            if post_timestamp > TIMESTAMP:
+            post_timestamp = post[1].replace(tzinfo=datetime.timezone.utc).timestamp()
+            if post_timestamp < TIMESTAMP:
                 new_posts.remove(post)
-        print(new_posts)
         return new_posts
         
     @staticmethod
     def getNewPostsFromTopicsUserFollowsSinceLastLogin():
-        print("getNewPostsFromFolloweesSinceLastLogin")
+        sql_query = "select content, ts " \
+                    "from Post " \
+                    "   inner join ((select topicID " \
+                    "       from UsersFollowTopics " \
+                    "       where userID = %i) as topics " \
+                    "       inner join PostsBelongToTopics " \
+                    "           on (PostsBelongToTopics.topicID = topics.topicID)) " \
+                    "   on (Post.pID = postID );" % ID
+        new_posts = DBConnector.query(sql_query)
+        for post in new_posts:
+            # convert datetime.datetime to UTC timestamp
+            post_timestamp = post[1].replace(tzinfo=datetime.timezone.utc).timestamp()
+            if post_timestamp < TIMESTAMP:
+                new_posts.remove(post)
+        return new_posts
         
     @staticmethod
     def getAllFollowers():
@@ -179,7 +193,7 @@ class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     # Util.login()
-    Util.thumbUpPost()
+    # Util.thumbUpPost()
 
     # while True:
     #     var = input("Please enter something: ")
