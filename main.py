@@ -1,9 +1,9 @@
 import mysql.connector
 import time
 
-USERNAME = "Alice"
-ID = 1
-TIMESTAMP = time.time()
+USERNAME = ""
+ID = -1
+TIMESTAMP = time.gmtime(0)
 
 class DatabaseConnector:
     def __init__(self):
@@ -46,6 +46,7 @@ class Util:
         if result:
             ID = result[0][0]
             USERNAME = result[0][1]
+            TIMESTAMP = result[0][2]
             print("Hello, " + USERNAME + " !")
             return True
 
