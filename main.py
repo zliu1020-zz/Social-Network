@@ -326,7 +326,30 @@ class Util:
 
     @staticmethod
     def joinGroup():
-        print("joinGroup")
+        groupID = input("Please enter the id of the group that you would like to join:")
+        sql = "select * from SocialGroup where gID = " + str(groupID)
+        result = DBConnector.query(sql)
+
+        if not result:
+            print("Failure: The group with group ID " + str(groupID) + " does not exist. ")
+            return False
+
+        try:
+            sql = "insert into UsersBelongToGroups(userID, groupID) values(" + str(ID) + "," + str(groupID) + ")"
+            result = DBConnector.executeWithoutCommitting(sql)
+
+            if not result:
+                DBConnector.rollback()
+                print("Encountered issues when inserting into database. Transaction aborted.")
+                return False
+            else:
+                DBConnector.commit()
+                print("You've joined group " + str(groupID) + " successfully.")
+                return True
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            return False
 
     @staticmethod
     def createGroup():
