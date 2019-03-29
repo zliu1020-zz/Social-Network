@@ -349,6 +349,8 @@ class Util:
         except mysql.connector.Error as err:
             DBConnector.rollback()
             print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            if "Duplicate entry" in err.msg:
+                print("You have already joined the group id " + str(groupID) + "!")
             return False
 
     @staticmethod
@@ -418,6 +420,8 @@ class Util:
         except mysql.connector.Error as err:
             DBConnector.rollback()
             print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            if "Duplicate entry" in err.msg:
+                print("You have already followed the topic id " + str(topicID) + "!")
             return False
         
     @staticmethod
