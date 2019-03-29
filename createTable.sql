@@ -36,15 +36,15 @@ insert into SocialGroup values(NULL, "Evil"), (NULL, "Goose");
 create table Post (
     pID int(10) auto_increment,
     content varchar(200),
-    ts timestamp,
+    ts timestamp default current_timestamp(),
     thumbNum int(10) default 0,
     primary key pk_post(pID)
 );
 alter table Post auto_increment = 1;
 insert into Post values
-(NULL, "qwer", current_timestamp(), default), 
-(NULL, "asdf", current_timestamp(), default), 
-(NULL, "zxcv", current_timestamp(), default);
+(NULL, "qwer", default, default),
+(NULL, "asdf", default, default),
+(NULL, "zxcv", default, default);
 
 create table Topic (
     tID int(10) auto_increment,

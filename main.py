@@ -12,7 +12,7 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="mappleleaf12"
+            password="lzy971020"
         )
         self.cursor = self.db.cursor()
     
@@ -28,7 +28,21 @@ class DatabaseConnector:
             return False
         else:
             return True
-        
+
+    def rollback(self):
+        self.db.rollback()
+
+    def commit(self):
+        self.db.commit()
+
+    def executeWithoutCommitting(self, sql, val=None):
+        self.cursor.execute(sql, val or ())
+
+        if self.cursor.rowcount == 0:
+            return False
+        else:
+            return True
+
     def runScript(self, path):
         file = open(path, 'r')
         sqlStatements = file.read()
@@ -39,6 +53,13 @@ class DatabaseConnector:
                 self.execute(statement)
             except OperationalError:
                 print("Error found when executing sql statement: ", statement , " Skipping.")
+
+    def getLastInsertionID(self):
+        return self.cursor.lastrowid
+
+    def closeConnection(self):
+        self.db.close()
+        self.cursor.close()
 
 DBConnector = DatabaseConnector()
 
@@ -150,7 +171,51 @@ class Util:
         
     @staticmethod
     def makeNewPostWithTopic():
-        print("makeNewPostWithTopic")
+        content = input("Please enter post content (text only):")
+        topicName = input("Please enter the topic name associated with the current post:")
+        if (not content) or (not topicName):
+            print("Input is invalid. Please try again.")
+            return False
+        else:
+            sql = "select * from Topic where name = '%s'" % topicName
+            result = DBConnector.query(sql)
+            if not result:
+                sql = "INSERT INTO Topic (name) VALUES ('" + topicName + "')"
+                insertionResult = DBConnector.executeWithoutCommitting(sql)
+                if not insertionResult:
+                    DBConnector.rollback()
+                    print("Failed to create a new topic named %s. Please try again later.", topicName)
+                    return False
+                else:
+                    topicID = DBConnector.getLastInsertionID()
+                    print("A new topic named " + topicName + " is created successfully. ID = " + str(topicID))
+            else:
+                topicID = result[0][0]
+
+            try:
+                postSql = "INSERT INTO Post (content) VALUES ('" + content + "')"
+                postResult = DBConnector.executeWithoutCommitting(postSql)
+                postID = DBConnector.getLastInsertionID()
+
+                usersOwnPostsSql = "INSERT INTO UsersOwnPosts (userID, postID) VALUES (" + str(ID) + "," + str(postID) + ")"
+                usersOwnPostsResult = DBConnector.executeWithoutCommitting(usersOwnPostsSql)
+
+                postsBelongToTopicsSql = "INSERT INTO PostsBelongToTopics (postID, topicID) VALUES (" + str(postID) + "," + str(topicID) + ")"
+                postsBelongToTopicsResult = DBConnector.executeWithoutCommitting(postsBelongToTopicsSql)
+
+                if postResult and usersOwnPostsResult and postsBelongToTopicsResult:
+                    DBConnector.commit()
+                    print("Post created successfully. ID = " + str(postID))
+                    return True
+                else:
+                    DBConnector.rollback()
+                    print("Encountered issues when inserting into database. Transaction aborted.")
+                    return False
+            except mysql.connector.Error as err:
+                DBConnector.rollback()
+                print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+                return False
+
     
     @staticmethod
     def thumbUpPost():
@@ -200,8 +265,9 @@ class Util:
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    # Util.login()
-    # Util.thumbUpPost()
+    Util.login()
+    #Util.makeNewPostWithTopic()
+    DBConnector.closeConnection()
 
     # while True:
     #     var = input("Please enter something: ")
