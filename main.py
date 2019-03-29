@@ -1,5 +1,6 @@
 import mysql.connector
 import time
+from tabulate import tabulate
 
 USERNAME = ""
 ID = -1
@@ -477,6 +478,7 @@ class Main:
     Util.continuousLogin()
 
     while True:
+        time.sleep(0.5)
         Util.printInstructions()
         instruction = input("Please enter your instruction:")
 
@@ -486,7 +488,10 @@ class Main:
             break
 
         if instruction == "show_current_user_info":
-            Util.getCurrentUserInformation()
+            info = Util.getCurrentUserInformation()
+            print("\n")
+            print(tabulate(info, headers=['ID', 'Name', 'DOB']))
+            print("\n")
         elif instruction == "show_new_posts_from_followees_since_last_login":
             Util.getNewPostsFromFolloweesSinceLastLogin()
         elif instruction == "show_new_posts_from_topics_user_follows_since_last_login":
