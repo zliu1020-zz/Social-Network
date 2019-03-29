@@ -358,6 +358,10 @@ class Util:
         groupName = input("Please enter the name of the new group:")
         friendID = input("Please enter the ID of another user that you'd like to join the new group with:")
 
+        if ID == int(friendID):
+            print("Failed to invite a friend. Please don't invite yourself.")
+            return False
+
         sql = "select * from NetworkUser where uID = " + str(friendID)
         result = DBConnector.query(sql)
 
