@@ -1,6 +1,5 @@
 import mysql.connector
 import time
-import datetime
 
 USERNAME = ""
 ID = -1
@@ -15,7 +14,7 @@ class DatabaseConnector:
             password="lzy971020"
         )
         self.cursor = self.db.cursor()
-    
+
     def query(self, sql):
         self.cursor.execute(sql)
         return self.cursor.fetchall()
@@ -63,7 +62,7 @@ class DatabaseConnector:
 
 DBConnector = DatabaseConnector()
 
-class Util:  
+class Util:
     @staticmethod
     def login():
         userName = input("what is your user name? ")
@@ -84,7 +83,7 @@ class Util:
         else:
             print("You are not present in our database, please try again")
             return False
-      
+
     @staticmethod
     def getCurrentUserInformation():
         sql = "select * from NetworkUser WHERE uid = %i" % ID
@@ -101,14 +100,15 @@ class Util:
                 "       inner join UsersOwnPosts " \
                 "           on (userID = followees.followeeID)) " \
                 "   on (Post.pID = postID );" % ID
-        new_posts = DBConnector.query(sql_query)
-        for post in new_posts:
-            # convert datetime.datetime to UTC timestamp
-            post_timestamp = post[1].replace(tzinfo=datetime.timezone.utc).timestamp()
-            if post_timestamp < TIMESTAMP:
-                new_posts.remove(post)
+        posts = DBConnector.query(sql_query)
+        new_posts = []
+        for post in posts:
+            # convert datetime.datetime to local timestamp
+            post_timestamp = post[1].replace().timestamp()
+            if post_timestamp > TIMESTAMP:
+                new_posts.append(post)
         return new_posts
-        
+
     @staticmethod
     def getNewPostsFromTopicsUserFollowsSinceLastLogin():
         sql_query = "select content, ts " \
@@ -119,14 +119,15 @@ class Util:
                     "       inner join PostsBelongToTopics " \
                     "           on (PostsBelongToTopics.topicID = topics.topicID)) " \
                     "   on (Post.pID = postID );" % ID
-        new_posts = DBConnector.query(sql_query)
-        for post in new_posts:
-            # convert datetime.datetime to UTC timestamp
-            post_timestamp = post[1].replace(tzinfo=datetime.timezone.utc).timestamp()
-            if post_timestamp < TIMESTAMP:
-                new_posts.remove(post)
+        posts = DBConnector.query(sql_query)
+        new_posts = []
+        for post in posts:
+            # convert datetime.datetime to local timestamp
+            post_timestamp = post[1].replace().timestamp()
+            if post_timestamp > TIMESTAMP:
+                new_posts.append(post)
         return new_posts
-        
+
     @staticmethod
     def getAllFollowers():
         sql = "select UsersFollowUsers.followerID as followerID,\
@@ -135,7 +136,7 @@ class Util:
          where uID = %i" % ID
         result = DBConnector.query(sql)
         return result
-    
+
     @staticmethod
     def getAllFollowees():
         sql = "select UsersFollowUsers.followeeID,\
@@ -144,7 +145,7 @@ class Util:
            on UsersFollowUsers.followerID = NetworkUser.uID where followerID = %i" % ID
         result = DBConnector.query(sql)
         return result
-        
+
     @staticmethod
     def getTopicsCurrentUserFollows():
             sql = "select Topic.name from Topic \
@@ -161,14 +162,14 @@ class Util:
           where userID = %i" % ID
         result = DBConnector.query(sql)
         return result
-        
+
     @staticmethod
     def getPostsUserOwns():
         sql = "select postID, content, ts, thumbNum from UsersOwnPosts\
          inner join Post on UsersOwnPosts.postID = Post.pID where userID = %i" % ID
         result = DBConnector.query(sql)
         return result
-        
+
     @staticmethod
     def makeNewPostWithTopic():
         content = input("Please enter post content (text only):")
@@ -273,12 +274,60 @@ class Util:
         
     @staticmethod
     def replyToPost():
-        print("replyToPost")
-        
+        postID = input("what is the ID of the post you want to reply? ")
+
+        checkPostExistence = "select * from Post where pID = %s " %postID
+        postInfo = DBConnector.query(checkPostExistence)
+
+        if len(postInfo) == 0:
+            print("The post does not exist!")
+            return False
+
+        content = input("what is the content to reply? ")
+        if content == "":
+            print("Please enter the reply content")
+            return False
+
+        selectTopicsID = "select topicID from PostsBelongToTopics where PostsBelongToTopics.postID = %s " %postID
+        topic = DBConnector.query(selectTopicsID)
+        topicID = topic[0][0]
+
+        if topicID == "":
+            print("Please enter the reply content")
+            return False
+        try:
+            sql = "insert into Post (content) values ('" + content + "')"
+            postResult = DBConnector.executeWithoutCommitting(sql)
+
+            if not postResult:
+                DBConnector.rollback()
+                print("Failed to create a new post with content " + content + ". Please try again later.")
+                return False
+            else:
+                newPostID = DBConnector.getLastInsertionID()
+                print("A new post content \"" + content + "\" is created successfully. ID = " + str(newPostID))
+
+                usersOwnPostsResult = DBConnector.executeWithoutCommitting("insert into UsersOwnPosts(userID, postID) values(" + str(ID) + "," + str(newPostID) + ");")
+                postsBelongToTopicsResult = DBConnector.executeWithoutCommitting("insert into PostsBelongToTopics(postID, topicID) values(" + str(newPostID) + "," + str(topicID) + ");")
+                postsRespondToPostsResult = DBConnector.executeWithoutCommitting("insert into PostsRespondToPosts(respondedPostID, respondingPostID) values(" + str(postID) + "," + str(newPostID) + ");")
+
+                if usersOwnPostsResult and postsBelongToTopicsResult and postsRespondToPostsResult:
+                    DBConnector.commit()
+                    print("You have replied to post id " + str(postID) + " successfully!")
+                    return True
+                else:
+                    DBConnector.rollback()
+                    print("Encountered issues when inserting into database. Transaction aborted.")
+
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting a new post into database. Transaction aborted. Message: ", err.msg)
+            return False
+
     @staticmethod
     def joinGroup():
         print("joinGroup")
-        
+
     @staticmethod
     def createGroup():
         groupName = input("Please enter the name of the new group:")
@@ -363,7 +412,6 @@ class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     Util.login()
-    Util.createGroup()
     DBConnector.closeConnection()
 
     # while True:
