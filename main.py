@@ -67,7 +67,7 @@ class Util:
     @staticmethod
     def login():
         userName = input("what is your user name? ")
-        userID = input("what is your ID ")
+        userID = input("what is your ID? ")
         searchQuery = "select * from NetworkUser where name = '" + userName + "' and uID = " + userID + ";"
         result = DBConnector.query(searchQuery)
 
@@ -78,11 +78,11 @@ class Util:
             USERNAME = result[0][1]
             global TIMESTAMP
             TIMESTAMP = time.time()
-            print("Hello, " + USERNAME + " !")
+            print("Hello, " + USERNAME + "!")
             return True
 
         else:
-            print("you are not present in our database, please try again")
+            print("You are not present in our database, please try again")
             return False
       
     @staticmethod
@@ -184,7 +184,7 @@ class Util:
                 insertionResult = DBConnector.executeWithoutCommitting(sql)
                 if not insertionResult:
                     DBConnector.rollback()
-                    print("Failed to create a new topic named %s. Please try again later.", topicName)
+                    print("Failed to create a new topic named " + topicName + ". Please try again later.")
                     return False
                 else:
                     topicID = DBConnector.getLastInsertionID()
@@ -221,25 +221,55 @@ class Util:
     def thumbUpPost():
         postNumber = input("what is the ID of the post you want to thumb up? ")
 
-        sql = "update Post set thumbNum = thumbNum + 1 where pID = " + postNumber
-        result = DBConnector.execute(sql)
+        sql = "select * from Post where pID = " + str(postNumber)
+        result = DBConnector.query(sql)
 
-        if result:
-            print("thumb up added to the the post!")
-        else:
-            print("something wrong happened to the machine, please try again!")
+        if not result:
+            print("Failure: The post with ID " + str(postNumber) + " does not exist. ")
+            return False
+        try:
+            sql = "update Post set thumbNum = thumbNum + 1 where pID = " + postNumber
+            result = DBConnector.executeWithoutCommitting(sql)
+
+            if result:
+                DBConnector.commit()
+                print("thumb up added to the the post!")
+                return True
+            else:
+                DBConnector.rollback()
+                print("something wrong happened to the machine, please try again!")
+                return False
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            return False
         
     @staticmethod
     def thumbDownPost():
         postNumber = input("what is the ID of the post you want to thumb down? ")
 
-        sql = "update Post set thumbNum = thumbNum - 1 where pID = " + postNumber
-        result = DBConnector.execute(sql)
+        sql = "select * from Post where pID = " + str(postNumber)
+        result = DBConnector.query(sql)
 
-        if result:
-            print("thumb down added to the the post!")
-        else:
-            print("something wrong happened to the machine, please try again!")
+        if not result:
+            print("Failure: The post with ID " + str(postNumber) + " does not exist. ")
+            return False
+        try:
+            sql = "update Post set thumbNum = thumbNum - 1 where pID = " + postNumber
+            result = DBConnector.executeWithoutCommitting(sql)
+
+            if result:
+                DBConnector.commit()
+                print("thumb up added to the the post!")
+                return True
+            else:
+                DBConnector.rollback()
+                print("something wrong happened to the machine, please try again!")
+                return False
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            return False
         
     @staticmethod
     def replyToPost():
@@ -255,18 +285,47 @@ class Util:
         
     @staticmethod
     def followTopic():
-        print("followTopic")
+        topicID = input("Please enter the id of the topic that you would like to follow:")
+        sql = "select * from Topic where tID = " + str(topicID)
+        result = DBConnector.query(sql)
+
+        if not result:
+            print("Failure: The topic with topic ID " + str(topicID) + " does not exist. ")
+            return False
+
+        try:
+            sql = "insert into UsersFollowTopics(userID, topicID) values(" + str(ID) + "," + str(topicID) + ")"
+            result = DBConnector.executeWithoutCommitting(sql)
+
+            if not result:
+                DBConnector.rollback()
+                print("Encountered issues when inserting into database. Transaction aborted.")
+                return False
+            else:
+                DBConnector.commit()
+                print("You've followed topic " + str(topicID) + " successfully.")
+                return True
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            return False
         
     @staticmethod
     def logout():
-        print("logout")
+        global USERNAME
+        USERNAME = ""
+        global ID
+        ID = -1
+        global TIMESTAMP
+        TIMESTAMP = 0
 
+        print("You've logged out. Bye.")
 
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     Util.login()
-    #Util.makeNewPostWithTopic()
+    Util.thumbUpPost()
     DBConnector.closeConnection()
 
     # while True:
