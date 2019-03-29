@@ -281,8 +281,46 @@ class Util:
         
     @staticmethod
     def createGroup():
-        print("createGroup")
-        
+        groupName = input("Please enter the name of the new group:")
+        friendID = input("Please enter the ID of another user that you'd like to join the new group with:")
+
+        sql = "select * from NetworkUser where uID = " + str(friendID)
+        result = DBConnector.query(sql)
+
+        if (not result) or (not groupName):
+            print("Failure: Nonexistent user id or invalid group name.")
+            return False
+
+        try:
+            groupSql = "insert into SocialGroup(name) values('" + groupName + "')"
+            groupResult = DBConnector.executeWithoutCommitting(groupSql)
+
+            if not groupResult:
+                DBConnector.rollback()
+                print("Failed to create a new group named " + groupName + ". Please try again later.")
+                return False
+            else:
+                groupID = DBConnector.getLastInsertionID()
+                print("A new group named " + groupName + " is created successfully. ID = " + str(groupID))
+
+                relationSql = "insert into UsersBelongToGroups(userID, groupID)\
+                values(" + str(ID) + ","  + str(groupID) + "), " + "(" + str(friendID) + ","  + str(groupID) + ")"
+                relationResult = DBConnector.executeWithoutCommitting(relationSql)
+
+                if groupResult and relationResult:
+                    DBConnector.commit()
+                    print("You and user " + str(friendID) + " have joined group " + str(groupID) + ".")
+                    return True
+                else:
+                    DBConnector.rollback()
+                    print("Encountered issues when inserting into database. Transaction aborted.")
+                    return False
+
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            return False
+
     @staticmethod
     def followTopic():
         topicID = input("Please enter the id of the topic that you would like to follow:")
@@ -325,7 +363,7 @@ class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
     Util.login()
-    Util.thumbUpPost()
+    Util.createGroup()
     DBConnector.closeConnection()
 
     # while True:
