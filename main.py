@@ -441,6 +441,7 @@ class Util:
 
     @staticmethod
     def printInstructions():
+        print("***********************************************")
         print("A list of instructions supported by this tool:\n")
         print("show_current_user_info\n")
         print("show_new_posts_from_followees_since_last_login\n")
@@ -457,7 +458,8 @@ class Util:
         print("join_group: takes one input, the group id\n")
         print("create_group: takes two inputs, the group name and friend id\n")
         print("follow_topic: takes one input, the topic id\n")
-        print("logout\n")
+        print("logout")
+        print("***********************************************")
 
     @staticmethod
     def continuousLogin():
