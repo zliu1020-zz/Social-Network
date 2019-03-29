@@ -77,7 +77,7 @@ class Util:
             USERNAME = result[0][1]
             global TIMESTAMP
             TIMESTAMP = time.time()
-            print("Hello, " + USERNAME + "!")
+            print("Hello, " + USERNAME + "!\n")
             return True
 
         else:
@@ -439,19 +439,79 @@ class Util:
 
         print("You've logged out. Bye.")
 
+    @staticmethod
+    def printInstructions():
+        print("A list of instructions supported by this tool:\n")
+        print("show_current_user_info\n")
+        print("show_new_posts_from_followees_since_last_login\n")
+        print("show_new_posts_from_topics_user_follows_since_last_login\n")
+        print("show_all_followers\n")
+        print("show_all_followees\n")
+        print("show_topics_user_follows\n")
+        print("show_groups_user_joins\n")
+        print("show_posts_user_owns\n")
+        print("make_new_post_with_topic: takes two inputs, post content and topic name\n")
+        print("thumb_up_post: takes one input, the post id\n")
+        print("thumb_down_post: takes one input, the post id\n")
+        print("reply_to_post: takes twos inputs, the post id and content\n")
+        print("join_group: takes one input, the group id\n")
+        print("create_group: takes two inputs, the group name and friend id\n")
+        print("follow_topic: takes one input, the topic id\n")
+        print("logout\n")
+
+    @staticmethod
+    def continuousLogin():
+        success = Util.login()
+        if not success:
+            while True:
+                success = Util.login()
+                if success:
+                    break
+
+
 class Main:
     DBConnector.runScript("./createTable.sql")
     print("Finished initializing database.")
-    Util.login()
-    DBConnector.closeConnection()
+    Util.continuousLogin()
 
-    # while True:
-    #     var = input("Please enter something: ")
-    #     print("You entered: " + var)
-    #     if int(var) == 123:
-    #         Util.getNewPostsFromFolloweesSinceLastLogin()
-    #         break
+    while True:
+        Util.printInstructions()
+        instruction = input("Please enter your instruction:")
 
-    
-    
-    
+        if instruction == "logout":
+            Util.logout()
+            DBConnector.closeConnection()
+            break
+
+        if instruction == "show_current_user_info":
+            Util.getCurrentUserInformation()
+        elif instruction == "show_new_posts_from_followees_since_last_login":
+            Util.getNewPostsFromFolloweesSinceLastLogin()
+        elif instruction == "show_new_posts_from_topics_user_follows_since_last_login":
+            Util.getNewPostsFromTopicsUserFollowsSinceLastLogin()
+        elif instruction == "show_all_followers":
+            Util.getAllFollowers()
+        elif instruction == "show_all_followees":
+            Util.getAllFollowees()
+        elif instruction == "show_topics_user_follows":
+            Util.getTopicsCurrentUserFollows()
+        elif instruction == "show_groups_user_joins":
+            Util.getGroupsUserJoins()
+        elif instruction == "show_posts_user_owns":
+            Util.getPostsUserOwns()
+        elif instruction == "make_new_post_with_topic":
+            Util.makeNewPostWithTopic()
+        elif instruction == "thumb_up_post":
+            Util.thumbUpPost()
+        elif instruction == "thumb_down_post":
+            Util.thumbDownPost()
+        elif instruction == "reply_to_post":
+            Util.replyToPost()
+        elif instruction == "join_group":
+            Util.joinGroup()
+        elif instruction == "create_group":
+            Util.createGroup()
+        elif instruction == "follow_topic":
+            Util.followTopic()
+        else:
+            print("The instruction you provide cannot be recognized. Please try again.")
