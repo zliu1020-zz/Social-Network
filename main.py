@@ -285,7 +285,7 @@ class Util:
 
         content = input("what is the content to reply? ")
         if content == "":
-            print("Please enter the reply content")
+            print("Please enter the reply content!")
             return False
 
         selectTopicsID = "select topicID from PostsBelongToTopics where PostsBelongToTopics.postID = %s " %postID
@@ -293,7 +293,7 @@ class Util:
         topicID = topic[0][0]
 
         if topicID == "":
-            print("Please enter the reply content")
+            print("The post you want to reply does not belong to any topics!")
             return False
         try:
             sql = "insert into Post (content) values ('" + content + "')"
@@ -305,7 +305,7 @@ class Util:
                 return False
             else:
                 newPostID = DBConnector.getLastInsertionID()
-                print("A new post content \"" + content + "\" is created successfully. ID = " + str(newPostID))
+                print("A new post with content \"" + content + "\" is created successfully. post ID = " + str(newPostID))
 
                 usersOwnPostsResult = DBConnector.executeWithoutCommitting("insert into UsersOwnPosts(userID, postID) values(" + str(ID) + "," + str(newPostID) + ");")
                 postsBelongToTopicsResult = DBConnector.executeWithoutCommitting("insert into PostsBelongToTopics(postID, topicID) values(" + str(newPostID) + "," + str(topicID) + ");")
