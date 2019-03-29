@@ -471,6 +471,11 @@ class Util:
                 if success:
                     break
 
+    @staticmethod
+    def prettyPrint(content, header):
+        print("\n")
+        print(tabulate(content, headers=header))
+        print("\n")
 
 class Main:
     DBConnector.runScript("./createTable.sql")
@@ -489,11 +494,9 @@ class Main:
 
         if instruction == "show_current_user_info":
             info = Util.getCurrentUserInformation()
-            print("\n")
-            print(tabulate(info, headers=['ID', 'Name', 'DOB']))
-            print("\n")
+            Util.prettyPrint(info, ['ID', 'Name', 'DOB'])
         elif instruction == "show_new_posts_from_followees_since_last_login":
-            Util.getNewPostsFromFolloweesSinceLastLogin()
+            print(Util.getNewPostsFromFolloweesSinceLastLogin())
         elif instruction == "show_new_posts_from_topics_user_follows_since_last_login":
             Util.getNewPostsFromTopicsUserFollowsSinceLastLogin()
         elif instruction == "show_all_followers":
