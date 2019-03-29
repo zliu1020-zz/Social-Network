@@ -149,12 +149,11 @@ class Util:
 
     @staticmethod
     def getTopicsCurrentUserFollows():
-            sql = "select Topic.name from Topic \
+            sql = "select Topic.tID, Topic.name from Topic \
                     inner join UsersFollowTopics as U \
                         on Topic.tID = U.topicID and U.userID = " + str(ID) +";"
-            print(sql)
             result = DBConnector.query(sql)
-            print(result)
+            return result
 
     @staticmethod
     def getGroupsUserJoins():
@@ -496,15 +495,18 @@ class Main:
             info = Util.getCurrentUserInformation()
             Util.prettyPrint(info, ['ID', 'Name', 'DOB'])
         elif instruction == "show_new_posts_from_followees_since_last_login":
-            print(Util.getNewPostsFromFolloweesSinceLastLogin())
+            Util.getNewPostsFromFolloweesSinceLastLogin()
         elif instruction == "show_new_posts_from_topics_user_follows_since_last_login":
             Util.getNewPostsFromTopicsUserFollowsSinceLastLogin()
         elif instruction == "show_all_followers":
-            Util.getAllFollowers()
+            followers = Util.getAllFollowers()
+            Util.prettyPrint(followers, ['ID', 'Name'])
         elif instruction == "show_all_followees":
-            Util.getAllFollowees()
+            followees = Util.getAllFollowees()
+            Util.prettyPrint(followees, ['ID', 'Name'])
         elif instruction == "show_topics_user_follows":
-            Util.getTopicsCurrentUserFollows()
+            topics = Util.getTopicsCurrentUserFollows()
+            Util.prettyPrint(topics, ['ID', 'Name'])
         elif instruction == "show_groups_user_joins":
             Util.getGroupsUserJoins()
         elif instruction == "show_posts_user_owns":
