@@ -1,6 +1,7 @@
 import mysql.connector
 import time
 from tabulate import tabulate
+from datetime import datetime
 
 USERNAME = ""
 ID = -1
@@ -454,7 +455,13 @@ class Util:
         
     @staticmethod
     def logout():
-        sql = "update NetworkUser set lastLogin = " + str(TIMESTAMP) + " where uID = " + str(ID)
+        global USERNAME
+        global ID
+        global TIMESTAMP
+
+        dt_obj = datetime.fromtimestamp(TIMESTAMP)
+
+        sql = "update NetworkUser set lastLogin = " + str(dt_obj) + " where uID = " + str(ID)
         try:
             result = DBConnector.execute(sql)
             if not result:
@@ -465,11 +472,8 @@ class Util:
                 DBConnector.commit()
                 return True
 
-                global USERNAME
                 USERNAME = ""
-                global ID
                 ID = -1
-                global TIMESTAMP
                 TIMESTAMP = 0
                 print("You've logged out. Bye.")
         except mysql.connector.Error as err:
