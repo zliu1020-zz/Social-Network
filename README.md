@@ -10,29 +10,36 @@ The user interface is command-line based and supports a list of instructions to 
 - `mysql-connector-python`
 - `python-tabulate`
 
+### Check default Python version
+- Install `Python3` by following this [article](https://realpython.com/installing-python/).
+- Check if your system has installed Python3 and what version it is by typing ``python --version ``
+- If the default version is at least v3, use `python` and `pip` in the following guidelines
+- Otherwise, if the default version is v2, use `python3` and `pip3`
+#### Note: The following sections assume the default python version is at least v3 
+ 
 ### Installing using requirements.txt
-1. Install `Python3` by following this [article](https://realpython.com/installing-python/).
 
-2. Make sure Python3 is installed by typing `python --version` in your terminal. 
+1. Install `MySQL8.0` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
 
-4. Install `MySQL8.0` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+2. Install relevant dependencies by running ``pip install -r requirements.txt``. 
 
-5. Install relevant dependencies by running ``pip install -r requirements.txt``. 
-
-6. If any command above fails, refer to the ``Installing Manually`` section below. 
+3. If any command above fails, refer to the ``Installing Manually`` section below. 
 
 ### Installing Manually
-1. Install `Python v3` by following this [article](https://realpython.com/installing-python/).
 
-2. Make sure Python is installed by typing `python --version` in your terminal. 
+1. Install `MySQL v8.0.15` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
 
-3. Install `MySQL v8.0.15` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+2. Make sure Python3 is installed by typing `mysql --version` in your terminal. 
 
-4. Make sure Python3 is installed by typing `mysql --version` in your terminal. 
+3. Install `mysql-connector-python` by typing `pip install mysql-connector-python`. Refer to this [guide](https://pynative.com/install-mysql-connector-python/) if the above command fails.
 
-5. Install `mysql-connector-python` by typing `pip install mysql-connector-python`. Refer to this [guide](https://pynative.com/install-mysql-connector-python/) if the above command fails.
+4. Install `tabulate` by typing `pip install tabulate`. Refer to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
 
-5. Install `tabulate` by typing `pip install tabulate`. Refer to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
+## Run
+Launch the application by using the following command:
+```
+python main.py
+```
 
 ## Functionalities
 - A person can initial a post on a topic.
