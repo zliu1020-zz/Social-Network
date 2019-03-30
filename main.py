@@ -427,6 +427,30 @@ class Util:
             if "Duplicate entry" in err.msg:
                 print("You have already followed the topic id " + str(topicID) + "!")
             return False
+
+    @staticmethod
+    def getAllUsers():
+        sql  = "select uID, name from NetworkUser;"
+        result = DBConnector.query(sql)
+        return result
+
+    @staticmethod
+    def getAllGroups():
+        sql  = "select gID, name from SocialGroup;"
+        result = DBConnector.query(sql)
+        return result
+
+    @staticmethod
+    def getAllPostsWithTopics():
+        sql  = "select pID, content, ts, thumbNum, name from Post inner join PostsBelongToTopics on(Post.pId = PostsBelongToTopics.postID) inner join Topic on(topicID = tID);"
+        result = DBConnector.query(sql)
+        return result
+
+    @staticmethod
+    def getAllTopics():
+        sql  = "select tID, name from Topic;"
+        result = DBConnector.query(sql)
+        return result
         
     @staticmethod
     def logout():
@@ -508,22 +532,38 @@ class Main:
             topics = Util.getTopicsCurrentUserFollows()
             Util.prettyPrint(topics, ['ID', 'Name'])
         elif instruction == "show_groups_user_joins":
-            Util.getGroupsUserJoins()
+            info = Util.getGroupsUserJoins()
+            Util.prettyPrint(info, ['group ID', 'group name'])
         elif instruction == "show_posts_user_owns":
-            Util.getPostsUserOwns()
+            info = Util.getPostsUserOwns()
+            Util.prettyPrint(info, ['postID', 'content', 'created time', 'thumb number'])
         elif instruction == "make_new_post_with_topic":
+            info = Util.getAllTopics()
+            Util.prettyPrint(info, ['Topic ID', 'Topic Name'])
             Util.makeNewPostWithTopic()
         elif instruction == "thumb_up_post":
+            info = Util.getAllPostsWithTopics()
+            Util.prettyPrint(info, ['Post ID', 'Content', 'Created Time', 'Thumb Number', 'Topic Name'])
             Util.thumbUpPost()
         elif instruction == "thumb_down_post":
+            info = Util.getAllPostsWithTopics()
+            Util.prettyPrint(info, ['Post ID', 'Content', 'Created Time', 'Thumb Number', 'Topic Name'])
             Util.thumbDownPost()
         elif instruction == "reply_to_post":
+            info = Util.getAllPostsWithTopics()
+            Util.prettyPrint(info, ['Post ID', 'Content', 'Created Time', 'Thumb Number', 'Topic Name'])
             Util.replyToPost()
         elif instruction == "join_group":
+            info = Util.getAllGroups()
+            Util.prettyPrint(info, ['Group ID', 'Group Name'])
             Util.joinGroup()
         elif instruction == "create_group":
+            info = Util.getAllUsers()
+            Util.prettyPrint(info, ['User ID', 'User Name'])
             Util.createGroup()
         elif instruction == "follow_topic":
+            info = Util.getAllTopics()
+            Util.prettyPrint(info, ['Topic ID', 'Topic Name'])
             Util.followTopic()
         else:
             print("The instruction you provide cannot be recognized. Please try again.")
