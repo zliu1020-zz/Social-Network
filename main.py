@@ -460,8 +460,9 @@ class Util:
         global TIMESTAMP
 
         dt_obj = datetime.fromtimestamp(TIMESTAMP)
+        date_time = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
 
-        sql = "update NetworkUser set lastLogin = " + str(dt_obj) + " where uID = " + str(ID)
+        sql = "update NetworkUser set lastLogin = '" + date_time + "' where uID = " + str(ID)
         try:
             result = DBConnector.execute(sql)
             if not result:
@@ -531,7 +532,7 @@ class Util:
 
 
 class Main:
-    Util.setupDatabse();
+    Util.setupDatabse()
     Util.continuousLogin()
 
     while True:
