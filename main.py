@@ -13,7 +13,7 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="mappleleaf12"
+            password="lzy971020"
         )
         self.cursor = self.db.cursor()
 
@@ -470,12 +470,11 @@ class Util:
                 return False
             else:
                 DBConnector.commit()
-                return True
-
                 USERNAME = ""
                 ID = -1
                 TIMESTAMP = 0
                 print("You've logged out. Bye.")
+                return True
         except mysql.connector.Error as err:
             DBConnector.rollback()
             print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
