@@ -13,7 +13,7 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="lzy971020"
+            password="htp19950715"
         )
         self.cursor = self.db.cursor()
 
@@ -94,45 +94,32 @@ class Util:
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
-        lastLogin = Util.getCurrentUserLastLoginTime()
-        sql_query = "select content, ts " \
-                "from Post " \
-                "   inner join ((select followeeID " \
-                "       from UsersFollowUsers " \
-                "       where followerID = %i) as followees " \
-                "       inner join UsersOwnPosts " \
-                "           on (userID = followees.followeeID)) " \
-                "   on (Post.pID = postID );" % ID
+        lastLoginResult = Util.getCurrentUserLastLoginTime()
+        lastLogin = lastLoginResult[0][0]
+        sql_query = "select NetworkUser.name,pID, content, ts, thumbNum, tID, Topic.name from Post inner " \
+                    "join ((select followeeID from UsersFollowUsers where followerID = %i) as followees " \
+                    "inner join UsersOwnPosts on (userID = followees.followeeID))on (Post.pID = postID ) inner join " \
+                    "PostsBelongToTopics on(Post.pID = PostsBelongToTopics.postID) inner join Topic on(topicID = tID) " \
+                    "inner join NetworkUser on (followees.followeeID = NetworkUser.uID);" %ID
         posts = DBConnector.query(sql_query)
-        print(posts)
         new_posts = []
         for post in posts:
-            # convert datetime.datetime to local timestamp
-            #post_timestamp = post[1].replace().timestamp()
-            # print(post[1])
-            # print(type(post[1]))
-            # print(lastLogin[0][0])
-            # print(type(lastLogin[0][0]))
-            if post[1] > lastLogin[0][0]:
+            if post[3] >= lastLogin:
                 new_posts.append(post)
         return new_posts
 
     @staticmethod
     def getNewPostsFromTopicsUserFollowsSinceLastLogin():
-        sql_query = "select content, ts " \
-                    "from Post " \
-                    "   inner join ((select topicID " \
-                    "       from UsersFollowTopics " \
-                    "       where userID = %i) as topics " \
-                    "       inner join PostsBelongToTopics " \
-                    "           on (PostsBelongToTopics.topicID = topics.topicID)) " \
-                    "   on (Post.pID = postID );" % ID
+        lastLoginResult = Util.getCurrentUserLastLoginTime()
+        lastLogin = lastLoginResult[0][0]
+        sql_query = "select Post.pID, Post.content, Post.ts, Post.thumbNum, Topic.tID, Topic.name from Post " \
+                    "inner join ((select topicID from UsersFollowTopics where userID = %i) as topics " \
+                    "inner join PostsBelongToTopics on (PostsBelongToTopics.topicID = topics.topicID))" \
+                    "on (Post.pID = postID) inner join Topic on (PostsBelongToTopics.topicID = Topic.tID);"%ID
         posts = DBConnector.query(sql_query)
         new_posts = []
         for post in posts:
-            # convert datetime.datetime to local timestamp
-            post_timestamp = post[1].replace().timestamp()
-            if post_timestamp < TIMESTAMP:
+            if post[2] >= lastLogin:
                 new_posts.append(post)
         return new_posts
 
@@ -559,11 +546,13 @@ class Main:
 
         if instruction == "show_current_user_info":
             info = Util.getCurrentUserInformation()
-            Util.prettyPrint(info, ['ID', 'Name', 'DOB'])
+            Util.prettyPrint(info, ['ID', 'Name', 'Date of Birth', 'Last Login'])
         elif instruction == "show_new_posts_from_followees_since_last_login":
-            print(Util.getNewPostsFromFolloweesSinceLastLogin())
+            info = Util.getNewPostsFromFolloweesSinceLastLogin()
+            Util.prettyPrint(info, ['User name','Post ID', 'Content', 'Created Time', 'Thumb Number', 'Topic ID', 'Topic Name'])
         elif instruction == "show_new_posts_from_topics_user_follows_since_last_login":
-            Util.getNewPostsFromTopicsUserFollowsSinceLastLogin()
+            info = Util.getNewPostsFromTopicsUserFollowsSinceLastLogin()
+            Util.prettyPrint(info, ['Post ID', 'Content', 'Created Time', 'Thumb Number', 'Topic ID', 'Topic Name'])
         elif instruction == "show_all_followers":
             followers = Util.getAllFollowers()
             Util.prettyPrint(followers, ['ID', 'Name'])
