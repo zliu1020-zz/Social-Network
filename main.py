@@ -255,7 +255,7 @@ class Util:
 
             if result:
                 DBConnector.commit()
-                print("thumb up added to the the post!")
+                print("thumb down added to the the post!")
                 return True
             else:
                 DBConnector.rollback()
@@ -536,7 +536,6 @@ class Main:
     Util.printInstructions()
 
     while True:
-        time.sleep(0.5)
         instruction = input("Please enter your instruction:")
 
         if instruction == "logout":
