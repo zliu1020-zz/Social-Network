@@ -464,6 +464,17 @@ class Util:
         print("You've logged out. Bye.")
 
     @staticmethod
+    def setupDatabse():
+        sql = "show databases like 'SocialNetwork'"
+        result = DBConnector.query(sql)
+        if not result:
+            DBConnector.runScript("./createTable.sql")
+            print("Finished initializing database.")
+        else:
+            DBConnector.execute("use SocialNetwork;")
+            print("Use existing database SocialNetwork.")
+
+    @staticmethod
     def printInstructions():
         print("***********************************************")
         print("A list of instructions supported by this tool:\n")
@@ -500,9 +511,9 @@ class Util:
         print(tabulate(content, headers=header))
         print("\n")
 
+
 class Main:
-    DBConnector.runScript("./createTable.sql")
-    print("Finished initializing database.")
+    Util.setupDatabse();
     Util.continuousLogin()
 
     while True:
