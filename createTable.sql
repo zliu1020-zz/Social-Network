@@ -18,12 +18,13 @@ create table NetworkUser(
     uID int(10) auto_increment,
     name varchar(20),
     DOB date,
+    lastLogin timestamp default current_timestamp(),
     primary key pk_networkuser(uID)
 );
 alter table NetworkUser auto_increment = 1;
-insert into NetworkUser values (NULL, "Alice", "1988-01-01"),
-(NULL, "Bob", "1999-12-12"),
-(NULL, "Cindy", "1963-11-11");
+insert into NetworkUser values (NULL, "Alice", "1988-01-01" , default),
+(NULL, "Bob", "1999-12-12", default),
+(NULL, "Cindy", "1963-11-11", default);
 
 create table SocialGroup (
     gID int(10) auto_increment,

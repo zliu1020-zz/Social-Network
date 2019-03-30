@@ -106,7 +106,7 @@ class Util:
         for post in posts:
             # convert datetime.datetime to local timestamp
             post_timestamp = post[1].replace().timestamp()
-            if post_timestamp > TIMESTAMP:
+            if post_timestamp < TIMESTAMP:
                 new_posts.append(post)
         return new_posts
 
@@ -125,7 +125,7 @@ class Util:
         for post in posts:
             # convert datetime.datetime to local timestamp
             post_timestamp = post[1].replace().timestamp()
-            if post_timestamp > TIMESTAMP:
+            if post_timestamp < TIMESTAMP:
                 new_posts.append(post)
         return new_posts
 
@@ -454,14 +454,28 @@ class Util:
         
     @staticmethod
     def logout():
-        global USERNAME
-        USERNAME = ""
-        global ID
-        ID = -1
-        global TIMESTAMP
-        TIMESTAMP = 0
+        sql = "update NetworkUser set lastLogin = " + str(TIMESTAMP) + " where uID = " + str(ID)
+        try:
+            result = DBConnector.execute(sql)
+            if not result:
+                DBConnector.rollback()
+                print("Logout failed due to internal error. Try again.")
+                return False
+            else:
+                DBConnector.commit()
+                return True
 
-        print("You've logged out. Bye.")
+                global USERNAME
+                USERNAME = ""
+                global ID
+                ID = -1
+                global TIMESTAMP
+                TIMESTAMP = 0
+                print("You've logged out. Bye.")
+        except mysql.connector.Error as err:
+            DBConnector.rollback()
+            print("Encountered issues when inserting into database. Transaction aborted. Message: ", err.msg)
+            return False
 
     @staticmethod
     def setupDatabse():
@@ -530,7 +544,7 @@ class Main:
             info = Util.getCurrentUserInformation()
             Util.prettyPrint(info, ['ID', 'Name', 'DOB'])
         elif instruction == "show_new_posts_from_followees_since_last_login":
-            Util.getNewPostsFromFolloweesSinceLastLogin()
+            print(Util.getNewPostsFromFolloweesSinceLastLogin())
         elif instruction == "show_new_posts_from_topics_user_follows_since_last_login":
             Util.getNewPostsFromTopicsUserFollowsSinceLastLogin()
         elif instruction == "show_all_followers":
