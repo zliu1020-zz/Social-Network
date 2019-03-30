@@ -94,6 +94,7 @@ class Util:
 
     @staticmethod
     def getNewPostsFromFolloweesSinceLastLogin():
+        lastLogin = Util.getCurrentUserLastLoginTime()
         sql_query = "select content, ts " \
                 "from Post " \
                 "   inner join ((select followeeID " \
@@ -103,11 +104,16 @@ class Util:
                 "           on (userID = followees.followeeID)) " \
                 "   on (Post.pID = postID );" % ID
         posts = DBConnector.query(sql_query)
+        print(posts)
         new_posts = []
         for post in posts:
             # convert datetime.datetime to local timestamp
-            post_timestamp = post[1].replace().timestamp()
-            if post_timestamp < TIMESTAMP:
+            #post_timestamp = post[1].replace().timestamp()
+            # print(post[1])
+            # print(type(post[1]))
+            # print(lastLogin[0][0])
+            # print(type(lastLogin[0][0]))
+            if post[1] > lastLogin[0][0]:
                 new_posts.append(post)
         return new_posts
 
@@ -450,6 +456,12 @@ class Util:
     @staticmethod
     def getAllTopics():
         sql  = "select tID, name from Topic;"
+        result = DBConnector.query(sql)
+        return result
+
+    @staticmethod
+    def getCurrentUserLastLoginTime():
+        sql = "select lastLogin from NetworkUser where uId = %i;" % ID
         result = DBConnector.query(sql)
         return result
         
