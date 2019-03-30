@@ -1,6 +1,6 @@
 # Simple Social Network
 
-This application resembles a simple social network written in Python with MySQL as the primary data store solution. 
+This application resembles a simple social network written in Python with MySQL as the data storage solution. 
 The user interface is command-line based and supports a list of instructions to emulate social interactions between users.
 
 ## Getting Started
