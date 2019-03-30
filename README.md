@@ -257,3 +257,8 @@ The user interface is command-line based and supports a list of instructions to 
   You've followed topic 1 successfully.
     ```
    
+## Limitation
+- This application does not support multi-user sessions.
+- This application does not support registering as a new user. To log in,
+please use existing credentials in the table ``NetworkUser``.
+- This application does not store user passwords. User ID and name are the only things needed to log in.
