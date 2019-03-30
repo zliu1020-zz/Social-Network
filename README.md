@@ -36,7 +36,8 @@ The user interface is command-line based and supports a list of instructions to 
 4. Install `tabulate` by typing `pip install tabulate`. Refer to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
 
 ## Run
-Launch the application by using the following command:
+1. **Important**: Edit ``main.py`` line 19 - 21 to replace the MySQL credentials with your own credentials(Host, user, password).
+2. Launch the application by using the following command:
 ```
 python main.py
 ```
