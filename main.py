@@ -13,7 +13,7 @@ class DatabaseConnector:
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="htp19950715"
+            password="mappleleaf12"
         )
         self.cursor = self.db.cursor()
 
@@ -496,6 +496,7 @@ class Util:
     def printInstructions():
         print("***********************************************")
         print("A list of instructions supported by this tool:\n")
+        print("show_instructions: display the aviable instruction for this program\n")
         print("show_current_user_info\n")
         print("show_new_posts_from_followees_since_last_login\n")
         print("show_new_posts_from_topics_user_follows_since_last_login\n")
@@ -533,10 +534,10 @@ class Util:
 class Main:
     Util.setupDatabse()
     Util.continuousLogin()
+    Util.printInstructions()
 
     while True:
         time.sleep(0.5)
-        Util.printInstructions()
         instruction = input("Please enter your instruction:")
 
         if instruction == "logout":
@@ -547,6 +548,8 @@ class Main:
         if instruction == "show_current_user_info":
             info = Util.getCurrentUserInformation()
             Util.prettyPrint(info, ['ID', 'Name', 'Date of Birth', 'Last Login'])
+        elif instruction == "show_instructions":
+            Util.printInstructions()
         elif instruction == "show_new_posts_from_followees_since_last_login":
             info = Util.getNewPostsFromFolloweesSinceLastLogin()
             Util.prettyPrint(info, ['User name','Post ID', 'Content', 'Created Time', 'Thumb Number', 'Topic ID', 'Topic Name'])
