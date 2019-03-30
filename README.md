@@ -10,18 +10,29 @@ The user interface is command-line based and supports a list of instructions to 
 - `mysql-connector-python`
 - `python-tabulate`
 
-### Installing
+### Installing using requirements.txt
 1. Install `Python3` by following this [article](https://realpython.com/installing-python/).
 
-2. Make sure Python3 is installed by typing `python3 --version` in your terminal. 
+2. Make sure Python3 is installed by typing `python --version` in your terminal. 
 
-3. Install `MySQL8.0` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+4. Install `MySQL8.0` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+
+5. Install relevant dependencies by running ``pip install -r requirements.txt``. 
+
+6. If any command above fails, refer to the ``Installing Manually`` section below. 
+
+### Installing Manually
+1. Install `Python v3` by following this [article](https://realpython.com/installing-python/).
+
+2. Make sure Python is installed by typing `python --version` in your terminal. 
+
+3. Install `MySQL v8.0.15` by following this [article](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
 
 4. Make sure Python3 is installed by typing `mysql --version` in your terminal. 
 
-5. Install `mysql-connector-python` by typing `pip3 install mysql-connector-python`. Refer to this [guide](https://pynative.com/install-mysql-connector-python/) if the above command fails.
+5. Install `mysql-connector-python` by typing `pip install mysql-connector-python`. Refer to this [guide](https://pynative.com/install-mysql-connector-python/) if the above command fails.
 
-5. Install `tabulate` by typing `pip3 install tabulate`. Refer to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
+5. Install `tabulate` by typing `pip install tabulate`. Refer to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
 
 ## Functionalities
 - A person can initial a post on a topic.
