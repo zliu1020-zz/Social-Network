@@ -41,6 +41,10 @@ The user interface is command-line based and supports a list of instructions to 
 
 - `show_new_posts_from_followees_since_last_login`:
     - Prints out the information of new posts from people that current user follows since their last login.
+    - To test output of this function
+      1. Login as user "Bob", then logout
+      2. Login as user "Alice", make new posts, then logout
+      3. Login as user "Bob", call the instruction `show_new_posts_from_followees_since_last_login`
     - Example output:
     ```
     User name      Post ID  Content    Created Time           Thumb Number    Topic ID  Topic Name
@@ -50,6 +54,10 @@ The user interface is command-line based and supports a list of instructions to 
 
 - `show_new_posts_from_topics_user_follows_since_last_login`:
     - Prints out the information of new posts from topics that current user follows since their last login.
+    - To test output of this function
+      1. Login as user "Alice", then logout
+      2. Login as user "Bob", join groups id 1 and 2, make new posts, then logout
+      3. Login as user "Alice", call the instruction `show_new_posts_from_topics_user_follows_since_last_login`
     - Example output:
     ```
       Post ID  Content    Created Time           Thumb Number    Topic ID  Topic Name
