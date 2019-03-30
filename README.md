@@ -19,9 +19,9 @@ The user interface is command-line based and supports a list of instructions to 
 
 4. Make sure Python3 is installed by typing `mysql --version` in your terminal. 
 
-5. Install `mysql-connector-python` by typing `pip3 install mysql-connector-python`. Refers to this [guide](https://pynative.com/install-mysql-connector-python/) if the above command fails.
+5. Install `mysql-connector-python` by typing `pip3 install mysql-connector-python`. Refer to this [guide](https://pynative.com/install-mysql-connector-python/) if the above command fails.
 
-5. Install `tabulate` by typing `pip3 install tabulate`. Refers to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
+5. Install `tabulate` by typing `pip3 install tabulate`. Refer to this [guide](https://pypi.org/project/tabulate/) if the above command fails.
 
 ## Functionalities
 - A person can initial a post on a topic.
