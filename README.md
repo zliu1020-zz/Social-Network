@@ -41,7 +41,7 @@ The user interface is command-line based and supports a list of instructions to 
 ```
 python main.py
 ```
-3. Use sample credentials in the database to log in. For example, use the following ``name``/``ID`` pair: ``Alice/1``, ``Bob/2`` and ``Cindy/3``.
+3. Use sample credentials in the database to log in. For example, use the following ``name``/``ID`` pair: ``Alice``/``1``, ``Bob``/``2`` and ``Cindy``/``3``.
 ## Functionalities
 - A person can initial a post on a topic.
 - A person can join a group with another person.
